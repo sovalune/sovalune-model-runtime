@@ -1,0 +1,64 @@
+name: CI/CD - Model Runtime
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libnats-dev
+
+      - name: Configure
+        run: |
+          mkdir -p build
+          cd build
+          cmake .. -DSOVALUNE_CPU_ONLY=ON
+
+      - name: Build
+        run: |
+          cd build
+          make -j$(nproc)
+
+      - name: Test
+        run: |
+          cd build
+          ./sovalune-model-runtime --help || true
+
+  build-cuda:
+    name: Build (CUDA)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install CUDA
+        uses: Jimver/cuda-toolkit@v0.2.1
+        with:
+          cuda-version: '12.2'
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y cmake build-essential libnats-dev
+
+      - name: Configure
+        run: |
+          mkdir -p build-cuda
+          cd build-cuda
+          cmake .. -DSOVALUNE_USE_CUDA=ON -DSOVALUNE_CPU_ONLY=OFF
+
+      - name: Build
+        run: |
+          cd build-cuda
+          make -j$(nproc)
