@@ -22,7 +22,10 @@ struct EngineConfig {
     int n_threads = 4;
     bool use_mmap = true;
     bool use_mlock = false;
-    
+
+    // NATS connection
+    std::string nats_url = "nats://localhost:4222";
+
     // Tool calling
     bool enable_tool_calling = true;
     int max_tool_calls = 5;

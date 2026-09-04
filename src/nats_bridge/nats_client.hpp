@@ -4,12 +4,8 @@
 #include <vector>
 #include <functional>
 
-// NATS is optional - compile without it for testing
-#if __has_include(<nats.h>)
+#if SOVALUNE_HAS_NATS
 #include <nats.h>
-#define SOVALUNE_HAS_NATS 1
-#else
-#define SOVALUNE_HAS_NATS 0
 #endif
 
 namespace sovalune {
@@ -35,30 +31,34 @@ class NatsClient {
 public:
     explicit NatsClient(const std::string& url);
     ~NatsClient();
-    
+
     // Subscribe to inference requests
     void subscribe_inference(ResponseCallback callback);
-    
+
     // Publish inference response
     void publish_response(const InferenceResponse& response);
-    
+
     // Publish tool call
     void publish_tool_call(const std::string& request_id, const std::string& tool_name, const std::string& arguments);
-    
+
     // Wait for tool result
     std::string wait_for_tool_result(const std::string& request_id, int timeout_ms = 30000);
-    
+
     // Health check
     bool is_connected() const;
-    
+
 private:
 #if SOVALUNE_HAS_NATS
     natsConnection* conn_ = nullptr;
     natsSubscription* sub_ = nullptr;
+    natsMsg* last_msg_ = nullptr;
 #else
     void* conn_ = nullptr;
     void* sub_ = nullptr;
+    void* last_msg_ = nullptr;
 #endif
+    std::string url_;
+    ResponseCallback callback_;
 };
 
 }  // namespace sovalune

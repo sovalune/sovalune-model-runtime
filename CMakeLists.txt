@@ -35,9 +35,9 @@ target_include_directories(sovalune-model-runtime PRIVATE
 )
 
 # Link libraries
-target_link_libraries(sovalune-model-runtime PRIVATE
-    pthread
-)
+if(NOT WIN32)
+    target_link_libraries(sovalune-model-runtime PRIVATE pthread)
+endif()
 if(NATS_FOUND)
     target_link_libraries(sovalune-model-runtime PRIVATE PkgConfig::NATS)
 endif()

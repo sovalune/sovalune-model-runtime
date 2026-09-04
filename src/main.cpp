@@ -6,6 +6,7 @@
 #include <signal.h>
 #include <thread>
 #include <chrono>
+#include <cstdlib>
 
 static bool running = true;
 
@@ -17,7 +18,7 @@ void signal_handler(int sig) {
 int main(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
-    
+
     // Handle --help
     if (argc > 1 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
         std::cout << "Sovalune Model Runtime v0.1.0" << std::endl;
@@ -30,56 +31,39 @@ int main(int argc, char* argv[]) {
         std::cout << "  SOVALUNE_NATS_URL     NATS server URL" << std::endl;
         return 0;
     }
-    
+
     std::cout << "=== Sovalune Model Runtime ===" << std::endl;
-    
-    // Load config
+
+    // Load config from environment
     sovalune::EngineConfig config;
-    config.model_path = std::getenv("SOVALUNE_MODEL_PATH") 
-        ? std::getenv("SOVALUNE_MODEL_PATH") 
+    config.model_path = std::getenv("SOVALUNE_MODEL_PATH")
+        ? std::getenv("SOVALUNE_MODEL_PATH")
         : "";
-    config.mode = std::getenv("SOVALUNE_RUNTIME_MODE") 
-        ? std::getenv("SOVALUNE_RUNTIME_MODE") 
+    config.mode = std::getenv("SOVALUNE_RUNTIME_MODE")
+        ? std::getenv("SOVALUNE_RUNTIME_MODE")
         : "cpu";
-    
-    std::cout << "Mode: " << config.mode << std::endl;
-    std::cout << "Model: " << (config.model_path.empty() ? "(none)" : config.model_path) << std::endl;
-    
+    config.nats_url = std::getenv("SOVALUNE_NATS_URL")
+        ? std::getenv("SOVALUNE_NATS_URL")
+        : "nats://localhost:4222";
+
     // Initialize engine
     sovalune::InferenceEngine engine(config);
-    
-    if (!engine.is_ready()) {
-        std::cerr << "Failed to initialize engine" << std::endl;
+
+    if (!engine.start()) {
+        std::cerr << "Failed to start engine" << std::endl;
         return 1;
     }
-    
+
     std::cout << "Engine ready. Context size: " << engine.get_context_size() << std::endl;
-    
-    // Connect to NATS
-    std::string nats_url = std::getenv("SOVALUNE_NATS_URL") 
-        ? std::getenv("SOVALUNE_NATS_URL") 
-        : "nats://localhost:4222";
-    
-    sovalune::NatsClient nats(nats_url);
-    
-    if (!nats.is_connected()) {
-        std::cerr << "Failed to connect to NATS" << std::endl;
-        return 1;
-    }
-    
-    // Register tools
-    sovalune::ToolCaller tool_caller;
-    // TODO: Register memory_search, memory_write, etc.
-    
+    std::cout << "Model: " << engine.get_model_name() << std::endl;
     std::cout << "Listening for inference requests..." << std::endl;
-    
+
     // Main loop
     while (running) {
-        // TODO: Process NATS messages
-        // For now, just sleep
         std::this_thread::sleep_for(std::chrono::milliseconds(100));
     }
-    
+
+    engine.stop();
     std::cout << "Model Runtime stopped." << std::endl;
     return 0;
 }
