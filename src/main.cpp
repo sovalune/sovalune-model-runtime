@@ -4,6 +4,8 @@
 #include "tokenizer/tokenizer.hpp"
 #include <iostream>
 #include <signal.h>
+#include <thread>
+#include <chrono>
 
 static bool running = true;
 

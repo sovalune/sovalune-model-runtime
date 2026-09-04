@@ -25,7 +25,7 @@ public:
     }
 
     bool try_parse_tool_call(const std::string& output, ToolCall& result) {
-        std::regex tool_pattern(R"(\{"tool"\s*:\s*"([^"]+)"\s*,\s*"arguments"\s*:\s*(\{[^}]+\})\})");
+        std::regex tool_pattern(R"delimiter(\{"tool"\s*:\s*"([^"]+)"\s*,\s*"arguments"\s*:\s*(\{[^}]+\})\})delimiter");
         std::smatch matches;
         if (std::regex_search(output, matches, tool_pattern)) {
             result.tool_name = matches[1].str();
