@@ -16,6 +16,19 @@ int main(int argc, char* argv[]) {
     signal(SIGINT, signal_handler);
     signal(SIGTERM, signal_handler);
     
+    // Handle --help
+    if (argc > 1 && (std::string(argv[1]) == "--help" || std::string(argv[1]) == "-h")) {
+        std::cout << "Sovalune Model Runtime v0.1.0" << std::endl;
+        std::cout << "Usage: sovalune-model-runtime [OPTIONS]" << std::endl;
+        std::cout << "Options:" << std::endl;
+        std::cout << "  -h, --help    Show this help message" << std::endl;
+        std::cout << "Environment:" << std::endl;
+        std::cout << "  SOVALUNE_MODEL_PATH   Path to model file" << std::endl;
+        std::cout << "  SOVALUNE_RUNTIME_MODE cpu or cuda (default: cpu)" << std::endl;
+        std::cout << "  SOVALUNE_NATS_URL     NATS server URL" << std::endl;
+        return 0;
+    }
+    
     std::cout << "=== Sovalune Model Runtime ===" << std::endl;
     
     // Load config
