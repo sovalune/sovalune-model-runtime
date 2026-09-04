@@ -8,9 +8,12 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 option(SOVALUNE_USE_CUDA "Enable CUDA support" OFF)
 option(SOVALUNE_CPU_ONLY "CPU only mode (dev)" ON)
 
-# Dependencies
+# Dependencies - NATS is optional
 find_package(PkgConfig)
 pkg_check_modules(NATS IMPORTED_TARGET libnats)
+if(NOT NATS_FOUND)
+    message(Warning "libnats not found, building without NATS support")
+endif()
 
 # Source files
 set(SOURCES
@@ -33,9 +36,11 @@ target_include_directories(sovalune-model-runtime PRIVATE
 
 # Link libraries
 target_link_libraries(sovalune-model-runtime PRIVATE
-    PkgConfig::NATS
     pthread
 )
+if(NATS_FOUND)
+    target_link_libraries(sovalune-model-runtime PRIVATE PkgConfig::NATS)
+endif()
 
 # CUDA support
 if(SOVALUNE_USE_CUDA)

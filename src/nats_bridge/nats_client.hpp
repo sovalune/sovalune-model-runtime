@@ -2,7 +2,15 @@
 
 #include <string>
 #include <vector>
+#include <functional>
+
+// NATS is optional - compile without it for testing
+#if __has_include(<nats.h>)
 #include <nats.h>
+#define SOVALUNE_HAS_NATS 1
+#else
+#define SOVALUNE_HAS_NATS 0
+#endif
 
 namespace sovalune {
 
