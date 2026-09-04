@@ -52,8 +52,13 @@ public:
     bool is_connected() const;
     
 private:
+#if SOVALUNE_HAS_NATS
     natsConnection* conn_ = nullptr;
     natsSubscription* sub_ = nullptr;
+#else
+    void* conn_ = nullptr;
+    void* sub_ = nullptr;
+#endif
 };
 
 }  // namespace sovalune
