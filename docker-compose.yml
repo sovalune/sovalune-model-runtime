@@ -1,0 +1,49 @@
+version: '3.8'
+
+services:
+  model-runtime:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8080:8080"
+    environment:
+      - SOVALUNE_MODEL_PATH=/models/model.gguf
+      - SOVALUNE_RUNTIME_MODE=cpu
+      - SOVALUNE_NATS_URL=nats://nats:4222
+    volumes:
+      - ./models:/models:ro
+    depends_on:
+      - nats
+    restart: unless-stopped
+
+  model-runtime-cuda:
+    build:
+      context: .
+      dockerfile: Dockerfile.cuda
+    ports:
+      - "8080:8080"
+    environment:
+      - SOVALUNE_MODEL_PATH=/models/model.gguf
+      - SOVALUNE_RUNTIME_MODE=cuda
+      - SOVALUNE_NATS_URL=nats://nats:4222
+    volumes:
+      - ./models:/models:ro
+    deploy:
+      resources:
+        reservations:
+          devices:
+            - driver: nvidia
+              count: 1
+              capabilities: [gpu]
+    depends_on:
+      - nats
+    restart: unless-stopped
+
+  nats:
+    image: nats:2-alpine
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: --http_port 8222
+    restart: unless-stopped

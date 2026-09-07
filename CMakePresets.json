@@ -1,0 +1,71 @@
+{
+    "version": 3,
+    "configurePresets": [
+        {
+            "name": "default",
+            "displayName": "Default (CPU)",
+            "description": "CPU-only build for development",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "SOVALUNE_CPU_ONLY": "ON",
+                "SOVALUNE_USE_CUDA": "OFF"
+            }
+        },
+        {
+            "name": "debug",
+            "displayName": "Debug (CPU)",
+            "description": "CPU-only debug build",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SOVALUNE_CPU_ONLY": "ON",
+                "SOVALUNE_USE_CUDA": "OFF"
+            }
+        },
+        {
+            "name": "cuda",
+            "displayName": "CUDA Release",
+            "description": "CUDA-enabled build for GPU acceleration",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build-cuda",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Release",
+                "SOVALUNE_CPU_ONLY": "OFF",
+                "SOVALUNE_USE_CUDA": "ON"
+            }
+        },
+        {
+            "name": "cuda-debug",
+            "displayName": "CUDA Debug",
+            "description": "CUDA-enabled debug build",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build-cuda-debug",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "SOVALUNE_CPU_ONLY": "OFF",
+                "SOVALUNE_USE_CUDA": "ON"
+            }
+        }
+    ],
+    "buildPresets": [
+        {
+            "name": "default",
+            "configurePreset": "default"
+        },
+        {
+            "name": "debug",
+            "configurePreset": "debug"
+        },
+        {
+            "name": "cuda",
+            "configurePreset": "cuda"
+        },
+        {
+            "name": "cuda-debug",
+            "configurePreset": "cuda-debug"
+        }
+    ]
+}

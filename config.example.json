@@ -1,0 +1,37 @@
+# Sovalune Model Runtime Configuration Example
+# Copy this file to config.json and modify as needed
+
+{
+    "model": {
+        "path": "/path/to/model.gguf",
+        "mode": "cpu",
+        "context_size": 4096,
+        "threads": 4,
+        "gpu_layers": 99,
+        "gpu_device": -1
+    },
+    "server": {
+        "port": 8080,
+        "host": "0.0.0.0"
+    },
+    "nats": {
+        "url": "nats://localhost:4222",
+        "enabled": true
+    },
+    "sampling": {
+        "temperature": 0.7,
+        "top_p": 0.9,
+        "top_k": 50,
+        "max_tokens": 1024,
+        "seed": -1
+    },
+    "tool_calling": {
+        "enabled": true,
+        "max_calls": 5,
+        "timeout_ms": 30000
+    },
+    "logging": {
+        "verbose": false,
+        "log_tokens": false
+    }
+}

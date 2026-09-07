@@ -1,0 +1,57 @@
+# Sovalune Model Runtime
+
+## Overview
+C++/CUDA inference engine for Sovalune AI models with llama.cpp backend.
+
+## Features
+- GGUF model loading via llama.cpp
+- CUDA acceleration with cuBLAS
+- CPU-only mode for development
+- REST API (OpenAI-compatible)
+- NATS messaging for distributed inference
+- Tool calling support
+- Streaming token generation
+
+## Project Structure
+```
+sovalune-model-runtime/
+├── src/
+│   ├── engine/          # Core inference engine
+│   │   ├── inference_engine.cpp/hpp  # Main engine wrapper
+│   │   ├── llama_backend.cpp/hpp     # llama.cpp integration
+│   │   ├── engine_config.cpp/hpp     # Configuration
+│   │   └── gpu_manager.cpp/hpp       # CUDA device management
+│   ├── server/          # REST API
+│   │   └── rest_api_server.cpp/hpp   # OpenAI-compatible API
+│   ├── tool_calling/    # Tool call parsing
+│   ├── nats_bridge/     # NATS messaging
+│   ├── tokenizer/       # Token counting
+│   └── main.cpp         # Entry point
+├── CMakeLists.txt       # Build configuration
+├── build.sh             # Build script
+├── Makefile             # Make targets
+├── Dockerfile           # Docker image (CPU)
+├── Dockerfile.cuda      # Docker image (CUDA)
+└── docker-compose.yml   # Docker Compose setup
+```
+
+## Build Commands
+```bash
+# CPU build
+make
+
+# CUDA build
+make cuda
+
+# Debug build
+make debug
+
+# Clean
+make clean
+```
+
+## Environment Variables
+- `SOVALUNE_MODEL_PATH` - Path to GGUF model
+- `SOVALUNE_RUNTIME_MODE` - cpu or cuda
+- `SOVALUNE_NATS_URL` - NATS server URL
+- `SOVALUNE_REST_PORT` - REST API port

@@ -1,7 +1,20 @@
 # Build directories
 build/
 build-cuda/
+build-debug/
+build-cuda-debug/
 cmake-build-*/
+_build/
+out/
+
+# CMake generated files
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+*.cmake
+!CMakeLists.txt
+!CMakePresets.json
 
 # IDE
 .vscode/
@@ -9,14 +22,48 @@ cmake-build-*/
 *.swp
 *.swo
 *~
+*.user
+*.suo
+*.ncb
+*.sdf
+*.opensdf
+*.VC.db
+*.VC.opendb
+*.vcxproj*
+*.sln
 
 # OS
 .DS_Store
 Thumbs.db
+desktop.ini
 
 # Compiled
 *.o
+*.obj
 *.a
+*.lib
 *.so
 *.dylib
+*.dll
 *.exe
+*.pdb
+*.ilk
+*.exp
+
+# llama.cpp generated
+ggml*.h
+ggml*.c
+llama.h
+common.h
+common.cpp
+build-info.h
+
+# Models and data
+*.gguf
+*.bin
+*.safetensors
+config.json
+!config.example.json
+
+# Docker
+.dockerignore

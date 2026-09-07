@@ -1,0 +1,43 @@
+# Build stage with CUDA
+FROM nvidia/cuda:12.3.0-devel-ubuntu22.04 AS builder
+
+# Install dependencies
+RUN apt-get update && apt-get install -y \
+    cmake \
+    build-essential \
+    git \
+    ninja-build \
+    libnats-dev \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy source
+WORKDIR /app
+COPY . .
+
+# Build CUDA version
+RUN mkdir build-cuda && cd build-cuda && \
+    cmake .. -DSOVALUNE_USE_CUDA=ON -DSOVALUNE_CPU_ONLY=OFF -DCMAKE_BUILD_TYPE=Release -G Ninja && \
+    ninja
+
+# Runtime stage
+FROM nvidia/cuda:12.3.0-runtime-ubuntu22.04 AS runtime
+
+# Install runtime dependencies
+RUN apt-get update && apt-get install -y \
+    libnats-dev \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
+
+# Copy binary
+COPY --from=builder /app/build-cuda/sovalune-model-runtime /usr/local/bin/
+
+# Expose port
+EXPOSE 8080
+
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+    CMD curl -f http://localhost:8080/health || exit 1
+
+# Run
+ENTRYPOINT ["sovalune-model-runtime"]
+CMD ["--help"]
